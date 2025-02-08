@@ -8,7 +8,7 @@ from config import configuration
 def main():
     spark = SparkSession.builder.appName("SmartCityStreaming") \
         .config("spark.jars.packages",
-                "org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1,"
+                "org.apache.spark:spark-sql-kafka-0-10_2.13:3.5.4,"
                 "org.apache.hadoop:hadoop-aws:3.3.1,"
                 "com.amazonaws:aws-java-sdk:1.11.469") \
         .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem") \
@@ -86,7 +86,7 @@ def main():
     def read_kafka_topic(topic, schema):
         return (spark.readStream
                 .format('kafka')
-                .option('kafka.bootstrap.servers', 'localhost:9092')
+                .option('kafka.bootstrap.servers', 'broker:29092')
                 .option('subscribe', topic)
                 .option('startingOffsets', 'earliest')
                 .load()
@@ -113,16 +113,16 @@ def main():
     emergencyDF = read_kafka_topic('emergency_data', emergencySchema).alias('emergency')
 
 
-    query1 = streamWriter(vehicleDF, 's3a://sparkstreamingdata1/checkpoints/vehicle_data',
-                 's3a://sparkstreamingdata1/data/vehicle_data')
-    query2 = streamWriter(gpsDF, 's3a://sparkstreamingdata1/checkpoints/gps_data',
-                 's3a://sparkstreamingdata1/data/gps_data')
-    query3 = streamWriter(trafficDF, 's3a://sparkstreamingdata1/checkpoints/traffic_data',
-                 's3a://sparkstreamingdata1/data/traffic_data')
-    query4 = streamWriter(weatherDF, 's3a://sparkstreamingdata1/checkpoints/weather_data',
-                 's3a://sparkstreamingdata1/data/weather_data')
-    query5 = streamWriter(emergencyDF, 's3a://sparkstreamingdata1/checkpoints/emergency_data',
-                 's3a://sparkstreamingdata1/data/emergency_data')
+    query1 = streamWriter(vehicleDF, 's3a://smartcity-spark-streaming-data-eng/checkpoints/vehicle_data',
+                 's3a://smartcity-spark-streaming-data-eng/data/vehicle_data')
+    query2 = streamWriter(gpsDF, 's3a://smartcity-spark-streaming-data-eng/checkpoints/gps_data',
+                 's3a://smartcity-spark-streaming-data-eng/data/gps_data')
+    query3 = streamWriter(trafficDF, 's3a://smartcity-spark-streaming-data-eng/checkpoints/traffic_data',
+                 's3a://smartcity-spark-streaming-data-eng/data/traffic_data')
+    query4 = streamWriter(weatherDF, 's3a://smartcity-spark-streaming-data-eng/checkpoints/weather_data',
+                 's3a://smartcity-spark-streaming-data-eng/data/weather_data')
+    query5 = streamWriter(emergencyDF, 's3a://smartcity-spark-streaming-data-eng/checkpoints/emergency_data',
+                 's3a://smartcity-spark-streaming-data-eng/data/emergency_data')
 
     
 
